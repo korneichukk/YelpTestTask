@@ -8,9 +8,7 @@ from yelptesttask.spider_item import YelpItem
 class YelpSpider(scrapy.Spider):
     name = "yelp"
 
-    def __init__(
-        self, query: str, location: str, name=None, **kwargs
-    ):
+    def __init__(self, query: str, location: str, name=None, **kwargs):
         super().__init__(self.name, **kwargs)
         self.start_urls = [
             f"https://www.yelp.com/search?find_desc={query}&find_loc={location}&sortby=rating"
@@ -51,9 +49,7 @@ class YelpSpider(scrapy.Spider):
         biz_name = response.xpath(".//h1/text()").get()
         # amount of reviews is in a tag with href="#reviews"
         # and it's always present and unique
-        biz_amount_of_reviews = response.css(
-            'a[href="#reviews"]::text'
-        ).get()
+        biz_amount_of_reviews = response.css('a[href="#reviews"]::text').get()
 
         # to get rating we need to find span with text
         # that include fload number from 0.0 to 5.0
@@ -72,9 +68,7 @@ class YelpSpider(scrapy.Spider):
 
         # business website is in a tag with href
         # that include "biz_redir" it may be missing
-        biz_redir = response.css(
-            'a[href*="biz_redir"]::attr(href)'
-        ).get()
+        biz_redir = response.css('a[href*="biz_redir"]::attr(href)').get()
 
         reviews = self.get_item_reviews(response)
 
@@ -123,9 +117,7 @@ class YelpSpider(scrapy.Spider):
         Returns:
             _type_: _description_
         """
-        reviewer_name = response.css(
-            "a[href*='user_details']::text"
-        ).get()
+        reviewer_name = response.css("a[href*='user_details']::text").get()
 
         reviewer_loc = response.xpath(".//span[1]/text()").get()
 
@@ -134,9 +126,7 @@ class YelpSpider(scrapy.Spider):
         date_pattern = r"\b\d{1,2}/\d{1,2}/\d{4}\b"
 
         all_text = response.css("span::text").getall()
-        date_text = [
-            text for text in all_text if re.search(date_pattern, text)
-        ]
+        date_text = [text for text in all_text if re.search(date_pattern, text)]
 
         return {
             "reviewer_name": reviewer_name,
